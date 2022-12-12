@@ -12,6 +12,8 @@
 # #  License: https://github.com/dchakro/alacritty_colors/blob/master/LICENSE
 # #<---------------------------->
 
+ALACRITTY_PATH="${HOME}/.config/alacritty/alacritty.yml"
+
 # Make a theme list
 
 declare -a arrFiles
@@ -27,12 +29,12 @@ RESET()
 {
 # Copies ./base.yml -> ~/.alacritty.yml
 echo ""
-echo 'This will overwrite your ~/.alacritty.yml with ./base.yml'
+echo "This will overwrite your \"${ALACRITTY_PATH}\" with ./base.yml"
 while true; do
 		read -p "Restore base config (y/N): " backup_choice1
 		case $backup_choice1 in
 	       	[Yy]* )  
-	       		cp ./base.yml ~/.alacritty.yml && echo "Config reset to base!"
+	       		cp ./base.yml "${ALACRITTY_PATH}" && echo "Config reset to base!"
 	       		break 
 	       		;;
 	       	[Nn]* )  
@@ -49,19 +51,19 @@ while true; do
 BACKUP()
 {
 # Backs up ~/.alacritty.yml as ~/.alacritty.bak.yml
-if [ ! -f ~/.alacritty.yml ] ; then
-	echo '~/.alacritty.yml does not exist!'
+if [ ! -f "${ALACRITTY_PATH}" ] ; then
+	echo "${ALACRITTY_PATH} does not exist!"
 	RESET
 fi
 
-if [ ! -f ~/.alacritty.bak.yml ] ; then
-	cp ~/.alacritty.yml ~/.alacritty.bak.yml && echo "Config backup successful!"
+if [ ! -f "${ALACRITTY_PATH/\.yml/\.bak\.yml}" ] ; then
+	cp "${ALACRITTY_PATH}" "${ALACRITTY_PATH/\.yml/\.bak\.yml}" && echo "Config backup successful!"
 else
 	while true; do
 		read -p "Backup exists. Overwrite? (y/N): " backup_choice2
 	    case $backup_choice2 in
 	       	[Yy]* )  
-	       		cp ~/.alacritty.yml ~/.alacritty.bak.yml && echo "Backup overwrite successful!"
+	       		cp "${ALACRITTY_PATH}" "${ALACRITTY_PATH/\.yml/\.bak\.yml}" && echo "Backup overwrite successful!"
 	       		break 
 	       		;;
 	       	[Nn]* )  
@@ -77,8 +79,8 @@ fi
 
 RESTORE()
 {
-if [ -f ~/.alacritty.bak.yml ] ; then
-   cp -f ~/.alacritty.bak.yml ~/.alacritty.yml && echo "Config restored!"   
+if [ -f  "${ALACRITTY_PATH/\.yml/\.bak\.yml}" ] ; then
+   cp -f "${ALACRITTY_PATH/\.yml/\.bak\.yml}" "${ALACRITTY_PATH}" && echo "Config restored!"   
 else
 	echo "Backup config for alacritty does not exist!!"
 	exit 1
@@ -109,7 +111,7 @@ inp=$((inp-1)) # as array indices start from 0
 echo ""
 echo "Applying the theme: ${arrFiles[inp]}"
 
-cat ./base.yml ./themes/${arrFiles[inp]} >| ~/.alacritty.yml
+cat ./base.yml ./themes/${arrFiles[inp]} >| "${ALACRITTY_PATH}"
 bash ./show_colors.sh
 
 while true; do
